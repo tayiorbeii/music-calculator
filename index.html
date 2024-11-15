@@ -186,20 +186,6 @@
           </div>
 
           <div class="calc-section">
-            <div class="section-title">TIME TO BPM</div>
-            <div class="input-group">
-              <div class="input-container">
-                <label>LENGTH (SECS)</label>
-                <input type="number" id="timeLength" value="2" />
-              </div>
-              <div class="input-container">
-                <label>BEATS</label>
-                <input type="number" id="timeBeats" value="4" />
-              </div>
-            </div>
-          </div>
-
-          <div class="calc-section">
             <div class="section-title">NOTE SHIFT</div>
             <div class="input-group">
               <div class="input-container">
@@ -296,7 +282,6 @@
       function syncFromMasterBpm(bpm) {
         const masterBpm = parseFloat(bpm);
         if (!isNaN(masterBpm)) {
-          // Update all calculations except timeToBpm
           updateDelay(masterBpm);
           updateNoteShiftFromSemitones(masterBpm);
           updateLfoRate(masterBpm);
@@ -310,18 +295,6 @@
         );
         const result = calculator.calculateDelay(bpm, division);
         document.getElementById("delayRate").value = result.rate;
-      }
-
-      // Time to BPM - Separate the Time to BPM calculation from master BPM updates
-      function updateTimeToBpm() {
-        const length = parseFloat(document.getElementById("timeLength").value);
-        const beats = parseFloat(document.getElementById("timeBeats").value);
-        if (!isNaN(length) && !isNaN(beats)) {
-          const result = calculator.timeToBpm(length, beats);
-          document.getElementById("masterBpm").value = result.bpm;
-          // Update other calculations with the new BPM
-          syncFromMasterBpm(result.bpm);
-        }
       }
 
       // Note Shift
@@ -389,18 +362,6 @@
         .getElementById("delayDivision")
         .addEventListener("input", function () {
           updateDelay(document.getElementById("masterBpm").value);
-        });
-
-      document
-        .getElementById("timeLength")
-        .addEventListener("input", function() {
-            updateTimeToBpm();
-        });
-
-      document
-        .getElementById("timeBeats")
-        .addEventListener("input", function() {
-            updateTimeToBpm();
         });
 
       document
@@ -513,7 +474,6 @@
 
         // Initialize all calculations
         updateDelay(initialBpm);
-        updateTimeToBpm(initialBpm);
         updateNoteShiftFromSemitones(initialBpm);
         updateLfoRate(initialBpm);
 
