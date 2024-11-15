@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Calculator</title>
+    <style>
+      body {
+        background-color: #2a2a2a;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      .calculator-grid {
+        max-width: 500px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .calc-section {
+        background-color: #3a3a3a;
+        padding: 15px;
+        border-radius: 5px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .section-title {
+        color: #ccc;
+        font-size: 14px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .input-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .input-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      input {
+        background-color: #4a4a4a;
+        border: 1px solid #5a5a5a;
+        color: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #666;
+        background-color: #505050;
+      }
+
+      label {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 6px;
+      }
+
+      .master-bpm {
+        margin-bottom: 20px;
+      }
+
+      .master-input {
+        font-size: 24px;
+        padding: 15px;
+        text-align: center;
+        width: 100%;
+        margin: 0 auto;
+        display: block;
+      }
+
+      .note-buttons {
+        margin-bottom: 15px;
+      }
+
+      .octave-buttons {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+
+      .note-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 4px;
+        margin-bottom: 15px;
+      }
+
+      .note-btn,
+      .octave-btn {
+        padding: 10px 5px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.2s;
+      }
+
+      .white-key {
+        background-color: #fff;
+        color: #000;
+      }
+
+      .black-key {
+        background-color: #333;
+        color: #fff;
+      }
+
+      .white-key:hover {
+        background-color: #eee;
+      }
+
+      .black-key:hover {
+        background-color: #444;
+      }
+
+      .octave-btn {
+        background-color: #666;
+        color: #fff;
+        flex: 1;
+      }
+
+      .octave-btn:hover {
+        background-color: #777;
+      }
+
+      .octave-btn.selected {
+        background-color: #4caf50;
+      }
+
+      .note-btn.selected {
+        border: 2px solid #4caf50;
+      }
+
+      .calculations-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator-grid">
+      <div class="calc-section master-bpm">
+        <div class="section-title">MASTER BPM</div>
+        <div class="input-container">
+          <input
+            type="number"
+            id="masterBpm"
+            placeholder="120"
+            class="master-input"
+          />
+        </div>
+      </div>
+
+      <div class="calculations-container">
+        <div>
+          <div class="calc-section">
+            <div class="section-title">DELAY</div>
+            <div class="input-group">
+              <div class="input-container">
+                <label>DIVISION (BARS)</label>
+                <input type="number" id="delayDivision" value="1" />
+              </div>
+              <div class="input-container">
+                <label>RATE (MSEC)</label>
+                <input type="text" id="delayRate" readonly />
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-section">
+            <div class="section-title">TIME TO BPM</div>
+            <div class="input-group">
+              <div class="input-container">
+                <label>LENGTH (SECS)</label>
+                <input type="number" id="timeLength" value="2" />
+              </div>
+              <div class="input-container">
+                <label>BEATS</label>
+                <input type="number" id="timeBeats" value="4" />
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-section">
+            <div class="section-title">NOTE SHIFT</div>
+            <div class="input-group">
+              <div class="input-container">
+                <label>SHIFT (SEMI TONES)</label>
+                <input
+                  type="number"
+                  id="noteShiftSemitones"
+                  value="2"
+                  step="1"
+                />
+              </div>
+              <div class="input-container">
+                <label>TARGET BPM</label>
+                <input type="number" id="noteShiftTarget" value="140" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="calc-section">
+            <div class="section-title">LFO RATE</div>
+            <div class="input-group">
+              <div class="input-container">
+                <label>DIVISION (BEATS)</label>
+                <input type="number" id="lfoDivision" value="4" />
+              </div>
+              <div class="input-container">
+                <label>RATE (HZ)</label>
+                <input type="text" id="lfoRate" readonly />
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-section">
+            <div class="section-title">NOTE FREQUENCY</div>
+            <div class="note-buttons">
+              <div class="octave-buttons">
+                <button class="octave-btn" data-octave="2">2</button>
+                <button class="octave-btn" data-octave="3">3</button>
+                <button class="octave-btn selected" data-octave="4">4</button>
+                <button class="octave-btn" data-octave="5">5</button>
+                <button class="octave-btn" data-octave="6">6</button>
+              </div>
+              <div class="note-grid">
+                <button class="note-btn white-key" data-note="C">C</button>
+                <button class="note-btn black-key" data-note="C#">C#</button>
+                <button class="note-btn white-key" data-note="D">D</button>
+                <button class="note-btn black-key" data-note="D#">D#</button>
+                <button class="note-btn white-key" data-note="E">E</button>
+                <button class="note-btn white-key" data-note="F">F</button>
+                <button class="note-btn black-key" data-note="F#">F#</button>
+                <button class="note-btn white-key" data-note="G">G</button>
+                <button class="note-btn black-key" data-note="G#">G#</button>
+                <button class="note-btn white-key" data-note="A">A</button>
+                <button class="note-btn black-key" data-note="A#">A#</button>
+                <button class="note-btn white-key" data-note="B">B</button>
+              </div>
+            </div>
+            <div class="input-group">
+              <div class="input-container">
+                <label>NOTE</label>
+                <input type="text" id="noteInput" value="A4" />
+              </div>
+              <div class="input-container">
+                <label>FREQUENCY (HZ)</label>
+                <input type="text" id="noteFreq" readonly />
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-section">
+            <div class="section-title">CLOSEST MIDI NOTE</div>
+            <div class="input-group">
+              <div class="input-container">
+                <label>FREQUENCY (HZ)</label>
+                <input type="number" id="freqInput" value="440" />
+              </div>
+              <div class="input-container">
+                <label>NOTE</label>
+                <input type="text" id="freqNote" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="music_calculations.js"></script>
+    <script>
+      const calculator = new MusicCalculator();
+
+      // Master BPM sync function
+      function syncFromMasterBpm(bpm) {
+        const masterBpm = parseFloat(bpm);
+        if (!isNaN(masterBpm)) {
+          // Update all calculations except timeToBpm
+          updateDelay(masterBpm);
+          updateNoteShiftFromSemitones(masterBpm);
+          updateLfoRate(masterBpm);
+        }
+      }
+
+      // Delay Calculator
+      function updateDelay(bpm) {
+        const division = parseFloat(
+          document.getElementById("delayDivision").value
+        );
+        const result = calculator.calculateDelay(bpm, division);
+        document.getElementById("delayRate").value = result.rate;
+      }
+
+      // Time to BPM - Separate the Time to BPM calculation from master BPM updates
+      function updateTimeToBpm() {
+        const length = parseFloat(document.getElementById("timeLength").value);
+        const beats = parseFloat(document.getElementById("timeBeats").value);
+        if (!isNaN(length) && !isNaN(beats)) {
+          const result = calculator.timeToBpm(length, beats);
+          document.getElementById("masterBpm").value = result.bpm;
+          // Update other calculations with the new BPM
+          syncFromMasterBpm(result.bpm);
+        }
+      }
+
+      // Note Shift
+      function updateNoteShiftFromSemitones(bpm) {
+        const semitones = parseFloat(
+          document.getElementById("noteShiftSemitones").value
+        );
+        const newBpm = calculator.semitoneShift(bpm, semitones);
+        document.getElementById("noteShiftTarget").value = newBpm.toFixed(3);
+      }
+
+      function updateNoteShiftFromTarget() {
+        const masterBpm = parseFloat(
+          document.getElementById("masterBpm").value
+        );
+        const target = parseFloat(
+          document.getElementById("noteShiftTarget").value
+        );
+        const semitones = calculator.semitoneDiff(masterBpm, target);
+        document.getElementById("noteShiftSemitones").value =
+          semitones.toFixed(3);
+      }
+
+      // LFO Rate
+      function updateLfoRate(bpm) {
+        const division = parseFloat(
+          document.getElementById("lfoDivision").value
+        );
+        const result = calculator.calculateLfoRate(bpm, division);
+        document.getElementById("lfoRate").value = result.rateHz;
+      }
+
+      // Note Frequency
+      function updateNoteFrequency() {
+        const noteInput = document.getElementById("noteInput").value;
+        const note = noteInput.substring(0, noteInput.length - 1);
+        const octave = parseInt(noteInput.slice(-1));
+        const result = calculator.noteToFrequency(note, octave);
+        document.getElementById("noteFreq").value = result
+          ? result.frequencyHz
+          : "Invalid Note";
+      }
+
+      // Closest MIDI Note
+      function updateClosestNote() {
+        const freq = parseFloat(document.getElementById("freqInput").value);
+        const result = calculator.frequencyToClosestNote(freq);
+        document.getElementById(
+          "freqNote"
+        ).value = `${result.note}${result.octave}`;
+      }
+
+      // Event Listeners
+      document
+        .getElementById("masterBpm")
+        .addEventListener("input", function() {
+          const bpm = parseFloat(this.value);
+          if (!isNaN(bpm)) {
+            syncFromMasterBpm(bpm);
+          }
+        });
+
+      // Other event listeners
+      document
+        .getElementById("delayDivision")
+        .addEventListener("input", function () {
+          updateDelay(document.getElementById("masterBpm").value);
+        });
+
+      document
+        .getElementById("timeLength")
+        .addEventListener("input", function() {
+            updateTimeToBpm();
+        });
+
+      document
+        .getElementById("timeBeats")
+        .addEventListener("input", function() {
+            updateTimeToBpm();
+        });
+
+      document
+        .getElementById("noteShiftSemitones")
+        .addEventListener("input", function () {
+          updateNoteShiftFromSemitones(
+            document.getElementById("masterBpm").value
+          );
+        });
+
+      document
+        .getElementById("noteShiftTarget")
+        .addEventListener("input", updateNoteShiftFromTarget);
+
+      document
+        .getElementById("lfoDivision")
+        .addEventListener("input", function () {
+          updateLfoRate(document.getElementById("masterBpm").value);
+        });
+
+      // Note buttons functionality
+      let currentOctave = 4;
+      let currentNote = "A";
+
+      function initializeNoteButtons() {
+        // Set up octave button listeners
+        document.querySelectorAll(".octave-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            document
+              .querySelectorAll(".octave-btn")
+              .forEach((btn) => btn.classList.remove("selected"));
+            this.classList.add("selected");
+            currentOctave = this.dataset.octave;
+            updateNoteInput();
+            updateClosestNoteHighlight();
+          });
+        });
+
+        // Set up note button listeners
+        document.querySelectorAll(".note-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            document
+              .querySelectorAll(".note-btn")
+              .forEach((btn) => btn.classList.remove("selected"));
+            this.classList.add("selected");
+            currentNote = this.dataset.note;
+            updateNoteInput();
+            updateClosestNoteHighlight();
+          });
+        });
+      }
+
+      function updateNoteInput() {
+        const noteInput = document.getElementById("noteInput");
+        noteInput.value = `${currentNote}${currentOctave}`;
+        noteInput.dispatchEvent(new Event("input"));
+        updateFreqFromNote();
+      }
+
+      function updateClosestNoteHighlight() {
+        const freq = parseFloat(document.getElementById("freqInput").value);
+        const result = calculator.frequencyToClosestNote(freq);
+
+        // Update the note buttons selection
+        document.querySelectorAll(".note-btn").forEach((btn) => {
+          btn.classList.remove("selected");
+          if (btn.dataset.note === result.note) {
+            btn.classList.add("selected");
+          }
+        });
+
+        // Update the octave buttons selection
+        document.querySelectorAll(".octave-btn").forEach((btn) => {
+          btn.classList.remove("selected");
+          if (btn.dataset.octave === result.octave.toString()) {
+            btn.classList.add("selected");
+          }
+        });
+
+        // Update the note display
+        document.getElementById(
+          "freqNote"
+        ).value = `${result.note}${result.octave}`;
+      }
+
+      // Add bidirectional connection between note buttons and frequency input
+      function updateFreqFromNote() {
+        const noteInput = document.getElementById("noteInput").value;
+        const note = noteInput.substring(0, noteInput.length - 1);
+        const octave = parseInt(noteInput.slice(-1));
+        const result = calculator.noteToFrequency(note, octave);
+
+        if (result) {
+          document.getElementById("freqInput").value = result.frequencyHz;
+          document
+            .getElementById("freqInput")
+            .dispatchEvent(new Event("input"));
+        }
+      }
+
+      // Add this event listener with the others
+      document
+        .getElementById("noteInput")
+        .addEventListener("input", updateFreqFromNote);
+
+      // Initial calculations
+      function initializeAllCalculations() {
+        const initialBpm = 120; // Set default BPM
+        document.getElementById("masterBpm").value = initialBpm;
+
+        // Initialize all calculations
+        updateDelay(initialBpm);
+        updateTimeToBpm(initialBpm);
+        updateNoteShiftFromSemitones(initialBpm);
+        updateLfoRate(initialBpm);
+
+        // Initialize note frequency
+        updateNoteFrequency();
+
+        // Initialize closest MIDI note
+        updateClosestNote();
+      }
+
+      // Call initialization
+      initializeAllCalculations();
+      initializeNoteButtons();
+    </script>
+  </body>
+</html>
