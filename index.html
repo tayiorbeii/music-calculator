@@ -153,6 +153,23 @@
         flex-direction: column;
         gap: 15px;
       }
+
+      select {
+        background-color: #4a4a4a;
+        border: 1px solid #5a5a5a;
+        color: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #666;
+        background-color: #505050;
+      }
     </style>
   </head>
   <body>
@@ -175,9 +192,27 @@
             <div class="section-title">DELAY</div>
             <div class="input-group">
               <div class="input-container">
-                <label>DIVISION (BARS)</label>
-                <input type="number" id="delayDivision" value="1" />
+                <label>NOTE VALUE</label>
+                <select id="delayNoteValue">
+                  <option value="1">1/1 (Whole)</option>
+                  <option value="0.5">1/2 (Half)</option>
+                  <option value="0.25">1/4 (Quarter)</option>
+                  <option value="0.125">1/8 (Eighth)</option>
+                  <option value="0.0625">1/16</option>
+                  <option value="0.03125">1/32</option>
+                  <option value="0.015625">1/64</option>
+                </select>
               </div>
+              <div class="input-container">
+                <label>MODIFIER</label>
+                <select id="delayModifier">
+                  <option value="1">Normal</option>
+                  <option value="1.5">Dotted</option>
+                  <option value="0.6666666667">Triplet</option>
+                </select>
+              </div>
+            </div>
+            <div class="input-group" style="margin-top: 10px;">
               <div class="input-container">
                 <label>RATE (MSEC)</label>
                 <input type="text" id="delayRate" readonly />
@@ -290,10 +325,9 @@
 
       // Delay Calculator
       function updateDelay(bpm) {
-        const division = parseFloat(
-          document.getElementById("delayDivision").value
-        );
-        const result = calculator.calculateDelay(bpm, division);
+        const noteValue = parseFloat(document.getElementById("delayNoteValue").value);
+        const modifier = parseFloat(document.getElementById("delayModifier").value);
+        const result = calculator.calculateDelay(bpm, noteValue * modifier);
         document.getElementById("delayRate").value = result.rate;
       }
 
@@ -363,8 +397,14 @@
 
       // Other event listeners
       document
-        .getElementById("delayDivision")
-        .addEventListener("input", function () {
+        .getElementById("delayNoteValue")
+        .addEventListener("change", function () {
+          updateDelay(document.getElementById("masterBpm").value);
+        });
+
+      document
+        .getElementById("delayModifier")
+        .addEventListener("change", function () {
           updateDelay(document.getElementById("masterBpm").value);
         });
 

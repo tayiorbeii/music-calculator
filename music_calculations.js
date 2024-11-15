@@ -144,17 +144,12 @@ class MusicCalculator {
     }
 
     // Delay calculator
-    calculateDelay(bpm, divisionBars) {
-        const beatsPerSecond = 60 / bpm;
-        const msPerBeat = beatsPerSecond * 1000;
-        const msPerBar = msPerBeat * 4; // Assuming 4/4 time
-        const delayMs = msPerBar * divisionBars;
-        const hz = 1000 / delayMs;
-        
+    calculateDelay(bpm, division) {
+        if (!bpm || !division) return { rate: 0 };
+        const beatMs = (60000 / bpm); // ms per beat
+        const delayMs = beatMs * 4 * division; // multiply by 4 to convert from quarter notes
         return {
-            rate: delayMs.toFixed(this.decimalPlaces),
-            hz: hz.toFixed(this.decimalPlaces),
-            bpm: this.hzToBpm(hz).toFixed(this.decimalPlaces)
+            rate: delayMs.toFixed(2)
         };
     }
 
