@@ -218,6 +218,20 @@
                 <input type="text" id="delayRate" readonly />
               </div>
             </div>
+            <div class="input-group" style="margin-top: 10px;">
+              <div class="input-container">
+                <label>NOTE</label>
+                <input type="text" id="delayNote" readonly />
+              </div>
+              <div class="input-container">
+                <label>OCTAVE</label>
+                <input type="text" id="delayOctave" readonly />
+              </div>
+              <div class="input-container">
+                <label>CENTS</label>
+                <input type="text" id="delayCents" readonly />
+              </div>
+            </div>
           </div>
 
           <div class="calc-section">
@@ -328,7 +342,11 @@
         const noteValue = parseFloat(document.getElementById("delayNoteValue").value);
         const modifier = parseFloat(document.getElementById("delayModifier").value);
         const result = calculator.calculateDelay(bpm, noteValue * modifier);
+        
         document.getElementById("delayRate").value = result.rate;
+        document.getElementById("delayNote").value = result.note;
+        document.getElementById("delayOctave").value = result.octave;
+        document.getElementById("delayCents").value = result.cents;
       }
 
       // Note Shift

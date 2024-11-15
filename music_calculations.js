@@ -144,12 +144,16 @@ class MusicCalculator {
     }
 
     // Delay calculator
-    calculateDelay(bpm, division) {
-        if (!bpm || !division) return { rate: 0 };
-        const beatMs = (60000 / bpm); // ms per beat
-        const delayMs = beatMs * 4 * division; // multiply by 4 to convert from quarter notes
+    calculateDelay(bpm, noteValue) {
+        const beatMs = 60000 / bpm;
+        const rate = beatMs * noteValue;
+        const noteInfo = this.msToNoteInfo(rate);
+        
         return {
-            rate: delayMs.toFixed(2)
+            rate: rate.toFixed(3),
+            note: noteInfo.note,
+            octave: noteInfo.octave,
+            cents: noteInfo.cents.toFixed(3)
         };
     }
 
@@ -309,6 +313,20 @@ class MusicCalculator {
             dottedQuarter: (quarterNote * 1.5).toFixed(this.decimalPlaces),
             dottedEighth: (quarterNote * 0.75).toFixed(this.decimalPlaces),
             dottedSixteenth: (quarterNote * 0.375).toFixed(this.decimalPlaces)
+        };
+    }
+
+    // Add this method to convert ms to Hz then to note info
+    msToNoteInfo(ms) {
+        const hz = 1000 / ms; // Convert ms to Hz
+        const powerDiff = Math.log(hz / 440) / Math.log(2);
+        const noteValue = 189 + (12 * powerDiff);
+        const noteIndex = Math.round(noteValue);
+        
+        return {
+            note: ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][Math.abs(noteIndex) % 12],
+            octave: Math.floor(noteIndex / 12) - 14,
+            cents: (noteValue - noteIndex) * 100
         };
     }
 }
