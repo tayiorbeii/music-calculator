@@ -341,7 +341,7 @@
       function updateDelay(bpm) {
         const noteValue = parseFloat(document.getElementById("delayNoteValue").value);
         const modifier = parseFloat(document.getElementById("delayModifier").value);
-        const result = calculator.calculateDelay(bpm, noteValue * modifier);
+        const result = calculator.calculateDelay(bpm, noteValue, modifier);
         
         document.getElementById("delayRate").value = result.rate;
         document.getElementById("delayNote").value = result.note;

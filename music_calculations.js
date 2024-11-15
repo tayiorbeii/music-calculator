@@ -144,14 +144,18 @@ class MusicCalculator {
     }
 
     // Delay calculator
-    calculateDelay(bpm, noteValue) {
+    calculateDelay(bpm, noteValue, modifier = 1) {
+        // Calculate base rate in milliseconds
         const beatMs = 60000 / bpm;
-        const rate = beatMs * noteValue;
-        const noteInfo = this.msToNoteInfo(rate);
+        const rate = (beatMs * 4 * noteValue * modifier); // Multiply by 4 to account for whole note reference
+        
+        // Calculate Hz for note conversion
+        const hz = 1000 / rate;
+        const noteInfo = this.bpmToMidiNote(this.hzToBpm(hz));
         
         return {
             rate: rate.toFixed(3),
-            note: noteInfo.note,
+            note: noteInfo.noteName,
             octave: noteInfo.octave,
             cents: noteInfo.cents.toFixed(3)
         };
