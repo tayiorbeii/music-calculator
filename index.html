@@ -372,11 +372,9 @@
 
       // LFO Rate
       function updateLfoRate(bpm) {
-        const division = parseFloat(
-          document.getElementById("lfoDivision").value
-        );
-        const result = calculator.calculateLfoRate(bpm, division);
-        document.getElementById("lfoRate").value = result.rateHz;
+        const division = parseFloat(document.getElementById("lfoDivision").value) || 4;
+        const result = calculator.calculateLfoRate(parseFloat(bpm) || 120, division);
+        document.getElementById("lfoRate").value = result.rateHz.toFixed(3) + " Hz";
       }
 
       // Note Frequency
@@ -408,7 +406,7 @@
         .getElementById("masterBpm")
         .addEventListener("input", function() {
           const bpm = parseFloat(this.value);
-          if (!isNaN(bpm)) {
+          if (!isNaN(bpm) && bpm > 0) {
             syncFromMasterBpm(bpm);
           }
         });

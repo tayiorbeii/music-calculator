@@ -189,16 +189,18 @@ class MusicCalculator {
 
     // LFO rate calculator
     calculateLfoRate(bpm, divisionBeats) {
+        if (!bpm || !divisionBeats) return { rateHz: 0 };
+        
         const beatsPerSecond = bpm / 60;
-        const hz = beatsPerSecond / divisionBeats;
+        const hz = beatsPerSecond / divisionBeats;  // This gives us cycles per second (Hz)
         const ms = 1000 / hz;
         const period = 1 / hz;
         
         return {
-            rateHz: hz.toFixed(this.decimalPlaces),
-            periodSecs: period.toFixed(this.decimalPlaces),
-            ms: ms.toFixed(this.decimalPlaces),
-            bpm: this.hzToBpm(hz).toFixed(this.decimalPlaces)
+            rateHz: hz,  // Remove toFixed here - we'll format in the UI
+            periodSecs: period,
+            ms: ms,
+            bpm: this.hzToBpm(hz)
         };
     }
 
